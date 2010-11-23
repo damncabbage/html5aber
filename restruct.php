@@ -53,7 +53,7 @@
 
 </head>
 <body>
-<div id="s" style="width: 50px; height: 50px; background: #afa; position: absolute; bottom: 0;">Here</div>
+
 	<div id="splash">HTML5aber</div>
 
 	<div id="bg">
@@ -207,6 +207,7 @@
 				}
 			});
 
+/*
 				$('#bg').click(function(){
 						if (!beam.hasClass('extended')) {
 							beam.addClass('extended');
@@ -224,6 +225,7 @@
 							playAudio(audio.off);
 						}
 				});
+*/
 
 
 		}); /* document.ready */
