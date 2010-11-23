@@ -73,7 +73,7 @@
 				},
 				on: {
 					src: '/audio/on0.mp3',
-					looping: false, length: 1800,
+					looping: false, length: 2000,
 					lastTime: 0, elt: null
 				},
 				off: {
@@ -121,10 +121,10 @@
 
 			var playAudio = function(item, postItem) {
 				if (currentAudioItem !== null) {
-					if (currentAudioLoopTimeout !== undefined) {
+					if (currentAudioLoopTimeout !== null) {
 						window.clearTimeout(currentAudioLoopTimeout);
 					}
-					currentAudioItem.elt.removeEventListener('ended', playAudio);
+					currentAudioItem.elt.removeEventListener('play', playAudio);
 					currentAudioItem.lastTime = currentAudioItem.elt.currentTime;
 					currentAudioItem.elt.pause();
 				}
@@ -151,7 +151,11 @@
 
 				if (postItem !== undefined) {
 					// Set up an event to follow it.
-					currentAudioItem.elt.addEventListener('ended', function(){playAudio(postItem)});
+					currentAudioItem.elt.addEventListener('play', function(){
+						window.setTimeout(function(){
+							playAudio(postItem);
+						}, currentAudioItem.length);
+					});
 				}
 			};
 
@@ -161,7 +165,7 @@
 
 				var splash = $(this);
 				/* TODO: Set up loading spinner */
-				audio.idle.elt.addEventListener('loadeddata',function(){
+				audio.on.elt.addEventListener('loadeddata',function(){
 					/* TODO: Show instructions briefly. */
 					splash.hide();
 				});
