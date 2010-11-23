@@ -69,33 +69,37 @@
 				idle: {
 					src: '/audio/idle.mp3',
 					looping: true, length: 3000,
-					elt: null
+					lastTime: 0, elt: null
 				},
 				on: {
 					src: '/audio/on0.mp3',
 					looping: false, length: 1800,
-					elt: null
+					lastTime: 0, elt: null
 				},
 				off: {
 					src: '/audio/off0.mp3',
 					looping: false, length: 1500,
-					elt: null
+					lastTime: 0, elt: null
 				},
 				swings: [
-					{ src: '/audio/swing_edit1.mp3', looping: false,
-					  length: 1000, elt: null },
-					{ src: '/audio/swing_edit2.mp3', looping: false,
-					  length: 1000, elt: null }
+					{ src: '/audio/swing_edit1.mp3',
+					  looping: false, length: 1000,
+					  lastTime: 0, elt: null },
+					{ src: '/audio/swing_edit2.mp3',
+					  looping: false, length: 1000,
+					  lastTime: 0, elt: null }
 				],
 				strikes: [
-					{ src: '/audio/strike1.mp3', looping: false,
-					  length: 1000, elt: null },
-					{ src: '/audio/strike2.mp3', looping: false,
-					  length: 1000, elt: null }
+					{ src: '/audio/strike1.mp3',
+					  looping: false, length: 1000,
+					  lastTime: 0, elt: null },
+					{ src: '/audio/strike2.mp3',
+					  looping: false, length: 1000,
+					  lastTime: 0, elt: null }
 				]
 			};
 
-			var currentAudio = null;
+			var currentAudioItem = null;
 			var currentAudioLoopTimeout = null;
 
 			var loadAudioElements = function(types) {
@@ -116,36 +120,38 @@
 			};
 
 			var playAudio = function(item, postItem) {
-				if (currentAudio !== null) {
+				if (currentAudioItem !== null) {
 					if (currentAudioLoopTimeout !== undefined) {
 						window.clearTimeout(currentAudioLoopTimeout);
 					}
-					currentAudio.removeEventListener('ended', playAudio);
-					currentAudio.pause();
-					if (currentAudio.currentTime) {
-						currentAudio.currentTime = 0;
-					}
+					currentAudioItem.elt.removeEventListener('ended', playAudio);
+					currentAudioItem.lastTime = currentAudioItem.elt.currentTime;
+					currentAudioItem.elt.pause();
 				}
 
-				currentAudio = item.elt;
+				currentAudioItem = item;
+				if (currentAudioItem.lastTime > 0) {
+					currentAudioItem.elt.currentTime = 0;
+				}
+
 				if (item.looping) {
 					var rewind = function(){
-						if (item.elt.src == currentAudio.src) {
-							window.setTimeout(function(){
-								item.elt.currentTime = 0.1; // 100ms from beginning, to skip fade-in.
+						if (item.elt.src == currentAudioItem.elt.src) {
+							currentAudioLoopTimeout = window.setTimeout(function(){
+								currentAudioItem.elt.currentTime = 0.1; // 100ms from beginning, to skip fade-in.
 								rewind();
 							}, item.length);
 						}
 					};
-					item.elt.play();
+					currentAudioItem.elt.play();
 					rewind();
 				} else {
-					item.elt.play();
+					currentAudioItem.elt.play();
 				}
 
 				if (postItem !== undefined) {
 					// Set up an event to follow it.
-					item.elt.addEventListener('ended', function(){playAudio(postItem)});
+					currentAudioItem.elt.addEventListener('ended', function(){playAudio(postItem)});
 				}
 			};
 
