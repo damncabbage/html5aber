@@ -10,30 +10,90 @@
 
 	<style>
 		body {
+			margin: 0; padding: 0;
+		}
+
+		body, #bg {
 			background: #000;
+			height: 480px;
 			width: 320px;
 		}
+
 		#beam {
+			position: absolute;
 			width: 100%;
-			height: 0;
 			background: -webkit-gradient(
-				linear, left top, left bottom,
+				linear, left top, right top,
 				color-stop(0%,#2bdcff), color-stop(20%,#FFFFFF),
 				color-stop(80%,#FFFFFF), color-stop(100%,#2bdcff)
 			);
+			height: 0;
+			top: 480px;
+			-webkit-transition: all 0.3s linear;
+			-webkit-transition-property: top, height;
+		}
+		#beam.extended {
+			top: 0px;
+			height: 480px;
+		}
+		audio {
+			display: none;
 		}
 	</style>
 
 </head>
 <body>
 
-	<div id="beam"></div>
-	
-
+	<div id="bg">
+		<div id="beam"></div>
+	</div>
 
 	<script src="/js/jquery-1.4.4.min.js"></script>
+	<script src="/js/jquery.jswipe-0.1.2.js"></script>
 	<script>
+		$(document).ready(function(){
+			var sfxOn = document.createElement('audio');
+			sfxOn.setAttribute('src', '/audio/on0.mp3');
+			sfxOn.load();
 
+			var sfxIdle = document.createElement('audio');
+			sfxIdle.setAttribute('src', '/audio/idle0.mp3');
+			sfxIdle.load();
+
+			var sfxOff = document.createElement('audio');
+			sfxOff.setAttribute('src', '/audio/off0.mp3');
+			sfxOff.load();
+
+			var beam = $('#beam');
+			$('#bg').swipe({
+				swipeUp:function(){
+					if (!beam.hasClass('extended')) {
+						beam.addClass('extended');
+						sfxOn.play();
+						sfxOn.addEventListener('ended',function(){
+							sfxIdle.play();
+							/* Cheap way of looping */
+							/*
+							sfxIdle.addEventListener('ended',function(){
+								this.pause();
+								this.currentTime = 0;
+								this.play();
+							});
+							*/
+						});
+					}
+				},
+			});
+			beam.swipe({
+				swipeDown:function(){
+					if (beam.hasClass('extended')) {
+						beam.removeClass('extended');
+						sfxIdle.pause();
+						sfxOff.play();
+					}
+				}
+			});
+		});
 	</script>
 </body>
 </html>
