@@ -4,18 +4,15 @@
 	<meta charset="utf-8">
 	<title>HTML5aber</title>
 	<meta name="language" content="en" /> 
-	<meta name="viewport" content="width=device-width; user-scalable=0; initial-scale=1.0; maximum-scale=1.0;" /> 
+	<meta name="viewport" content="width=device-width; height=device-height; user-scalable=0; initial-scale=1.0; maximum-scale=1.0;" /> 
 	<meta name="apple-mobile-web-app-capable" content="yes" /> 
 
 	<style>
-		body {
-			margin: 0; padding: 0;
-		}
-
 		body, #bg {
 			background: #000;
-			height: 480px;
 			width: 320px;
+			height: 480px;
+			margin: 0; padding: 0;
 		}
 
 		#beam {
@@ -39,7 +36,7 @@
 			display: none;
 		}
 		#splash {
-			margin: 70px auto;
+			margin: 140px auto;
 			background: #222;
 			height: 100px;
 			width: 100px;
@@ -70,7 +67,7 @@
 
 			#splash .step-2 {
 				display: none;
-				padding: 20px 5px;
+				padding: 25px 5px 0;
 			}
 			#splash .step-3 {
 				display: none;
@@ -89,21 +86,22 @@
 </head>
 <body>
 
-	<div id="splash">
-		<div class="step-1">
-			<h1>HTML<span class="highlight">5aber</span></h1>
-			<p class="instructions">Push to Start</p>
-		</div>
-		<div class="step-2">
-			<img src="/images/loading.gif" />
-		</div>
-		<div class="step-3">
-			<h1>HTML<span class="highlight">5aber</span></h1>
-			<p class="instructions">Swipe to Ignite</p>
-		</div>
-	</div>
-
 	<div id="bg">
+
+		<div id="splash">
+			<div class="step-1">
+				<h1>HTML<span class="highlight">5aber</span></h1>
+				<p class="instructions">Push to Start</p>
+			</div>
+			<div class="step-2">
+				<img src="/images/loading.gif" />
+			</div>
+			<div class="step-3">
+				<h1>HTML<span class="highlight">5aber</span></h1>
+				<p class="instructions">Swipe to Ignite</p>
+			</div>
+		</div>
+
 		<div id="beam"></div>
 	</div>
 
@@ -111,6 +109,8 @@
 	<script src="/js/jquery.jswipe-0.1.2.js"></script>
 	<script>
 		$(document).ready(function(){
+
+			window.setTimeout(scrollTo, 0, 0, 1); 
 
 			var audio = {
 				idle: {
@@ -253,7 +253,9 @@
 					if (!beam.hasClass('extended')) {
 						beam.addClass('extended');
 						playAudio(audio.on, audio.idle);
-						window.ondevicemotion = swingDetection;
+						if (window.DeviceMotionEvent !== undefined) {
+							window.ondevicemotion = swingDetection;
+						}
 					}
 				},
 			});
@@ -261,31 +263,13 @@
 				swipeDown:function(){
 					if (beam.hasClass('extended')) {
 						beam.removeClass('extended');
-						window.ondevicemotion = null;
+						if (window.DeviceMotionEvent !== undefined) {
+							window.ondevicemotion = null;
+						}
 						playAudio(audio.off);
 					}
 				}
 			});
-
-/*
-				$('#bg').click(function(){
-						if (!beam.hasClass('extended')) {
-							beam.addClass('extended');
-							playAudio(audio.on, audio.idle);
-							window.ondevicemotion = swingDetection;
-
-							$('#s').click(function(){
-								var randPlayerIdx = Math.floor(Math.random() * audio.swings.length);
-								playAudio(audio.swings[randPlayerIdx], audio.idle);
-
-							});
-						} else {
-							beam.removeClass('extended');
-							window.ondevicemotion = null;
-							playAudio(audio.off);
-						}
-				});
-*/
 
 
 		}); /* document.ready */
