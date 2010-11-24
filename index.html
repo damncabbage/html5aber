@@ -41,20 +41,67 @@
 		#splash {
 			margin: 70px auto;
 			background: #222;
-			height: 60px;
+			height: 100px;
 			width: 100px;
 			text-align: center;
 			font-family: sans-serif;
 			color: #eee;
 			border-radius: 5px;
-			padding-top: 40px;
+			cursor: pointer;
 		}
+			#splash h1 {
+				padding:12px 0 0;
+				margin:0;
+				font-family: 'DroidRegular', sans-serif; font-size-adjust: 0.82;
+				font-size: 35px;
+				font-weight: normal;
+			}
+			#splash h1 .highlight {
+				color: #2bdcff;
+			}
+			#splash .instructions {
+				padding:1px 0 0;margin:0;
+				font-family: 'DroidRegular', sans-serif; font-size-adjust: 0.82;
+				font-size: 27px;
+			}
+				#splash .step-3 .instructions {
+					font-size: 25px;
+				}
+
+			#splash .step-2 {
+				display: none;
+				padding: 20px 5px;
+			}
+			#splash .step-3 {
+				display: none;
+			}
+
+		@font-face {
+			font-family: 'DroidRegular';
+			src: url('/fonts/droid-webfont.eot');
+			src: url('/fonts/droid-webfont.woff') format('woff'), url('/fonts/droid-webfont.ttf') format('truetype'), url('/fonts/droid-webfont.svg#webfont5xGiZSm2') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+
 	</style>
 
 </head>
 <body>
 
-	<div id="splash">HTML5aber</div>
+	<div id="splash">
+		<div class="step-1">
+			<h1>HTML<span class="highlight">5aber</span></h1>
+			<p class="instructions">Push to Start</p>
+		</div>
+		<div class="step-2">
+			<img src="/images/loading.gif" />
+		</div>
+		<div class="step-3">
+			<h1>HTML<span class="highlight">5aber</span></h1>
+			<p class="instructions">Swipe to Ignite</p>
+		</div>
+	</div>
 
 	<div id="bg">
 		<div id="beam"></div>
@@ -162,14 +209,21 @@
 			};
 
 
-			$('#splash').click(function(){
+			$('#splash .step-1').click(function(){
 				loadAudioElements(audio);
 
-				var splash = $(this);
+				var step2 = $('#splash .step-2');
+				$(this).hide();
+				step2.show();
+
 				/* TODO: Set up loading spinner */
 				audio.on.elt.addEventListener('loadeddata',function(){
 					/* TODO: Show instructions briefly. */
-					splash.hide();
+					step2.hide();
+					$('#splash .step-3').show();
+					$('#splash').animate({
+						opacity: 0
+					}, 'slow');
 				});
 
 			}); /* splash.click */
